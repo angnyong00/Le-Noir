@@ -859,7 +859,7 @@ let vol      = 70;
 let ytp = null, ytReady = false, pendVid = null;
 
 try {
-  const s = localStorage.getItem('stellar_playlist');
+  const s = localStorage.getItem('noir_jazz_playlist');
   if (s) frames = JSON.parse(s);
 } catch(e) {}
 
@@ -1096,12 +1096,12 @@ setInterval(updClock, 1000); updClock();
 
 // Memos
 ['memo1','memo2'].forEach(k => {
-  const v = localStorage.getItem('noir_' + k);
+  const v = localStorage.getItem('noir_jazz_' + k);
   if (v) document.getElementById(k).value = v;
 });
 
 function saveMemo(k, v) {
-  localStorage.setItem('noir_' + k, v);
+  localStorage.setItem('noir_jazz_' + k, v);
 }
 
 /* ═══════════════════════════════════════════
@@ -1223,7 +1223,7 @@ function playIdx(i) {
   const img   = document.getElementById('cover-img');
   const empty = document.getElementById('cover-empty');
   try {
-    const stored = localStorage.getItem(`stellar_media_${f.id}`);
+    const stored = localStorage.getItem(`noir_jazz_media_${f.id}`);
     if (stored) { img.src = stored; img.style.display = 'block'; empty.style.display = 'none'; }
     else        { img.src = '';     img.style.display = 'none';  empty.style.display = 'flex'; }
   } catch(e) {
@@ -1328,7 +1328,7 @@ function toggleEdit() {
     // 편집 패널 숨기기
     document.querySelectorAll('.tr-edit').forEach(el => { el.style.display = 'none'; });
     document.querySelectorAll('.tr-order').forEach(el => { el.style.display = 'none'; });
-    localStorage.setItem('stellar_playlist', JSON.stringify(frames));
+    localStorage.setItem('noir_jazz_playlist', JSON.stringify(frames));
   }
   softBeep(editMode ? 1100 : 800);
 }
@@ -1339,18 +1339,18 @@ function toggleEdit() {
 function addTrack() {
   const newId = frames.length > 0 ? Math.max(...frames.map(f => f.id)) + 1 : 1;
   frames.push({ id: newId, title: "New Track", artist: "Unknown", yt: "" });
-  localStorage.setItem('stellar_playlist', JSON.stringify(frames));
+  localStorage.setItem('noir_jazz_playlist', JSON.stringify(frames));
   renderList();
   // renderList 이후 applyEditDOM 재호출 (renderList 내부에서 editMode체크하지만 확실히)
   applyEditDOM();
 }
 
 function delTrack(i) {
-  localStorage.removeItem(`stellar_media_${frames[i].id}`);
+  localStorage.removeItem(`noir_jazz_media_${frames[i].id}`);
   frames.splice(i, 1);
   if (curIdx === i) curIdx = -1;
   else if (curIdx > i) curIdx--;
-  localStorage.setItem('stellar_playlist', JSON.stringify(frames));
+  localStorage.setItem('noir_jazz_playlist', JSON.stringify(frames));
   renderList();
   if (editMode) applyEditDOM();
 }
@@ -1361,7 +1361,7 @@ function moveTrack(index, dir) {
   let playId = curIdx !== -1 ? frames[curIdx].id : null;
   [frames[index], frames[target]] = [frames[target], frames[index]];
   if (playId !== null) curIdx = frames.findIndex(f => f.id === playId);
-  localStorage.setItem('stellar_playlist', JSON.stringify(frames));
+  localStorage.setItem('noir_jazz_playlist', JSON.stringify(frames));
   renderList();
   if (editMode) applyEditDOM();
   softBeep(1200);
@@ -1383,7 +1383,7 @@ function extractYtId(val) {
 function updTrack(i, key, val) {
   if (key === 'yt') val = extractYtId(val.trim());
   frames[i][key] = val;
-  localStorage.setItem('stellar_playlist', JSON.stringify(frames));
+  localStorage.setItem('noir_jazz_playlist', JSON.stringify(frames));
   if (key !== 'yt' && i === curIdx) {
     document.getElementById('cinema-title').textContent  = frames[i].title  || '—';
     document.getElementById('cinema-artist').textContent = frames[i].artist || '';
@@ -1406,7 +1406,7 @@ function fileChg(e) {
     const img   = document.getElementById('cover-img');
     const empty = document.getElementById('cover-empty');
     img.src = res; img.style.display = 'block'; empty.style.display = 'none';
-    localStorage.setItem(`stellar_media_${frames[curIdx].id}`, res);
+    localStorage.setItem(`noir_jazz_media_${frames[curIdx].id}`, res);
   };
   reader.readAsDataURL(file);
   e.target.value = '';
@@ -1432,7 +1432,7 @@ function importPlaylist(input) {
       const data = JSON.parse(e.target.result);
       if (!data.frames || !Array.isArray(data.frames)) { alert('올바른 백업 파일이 아닙니다.'); return; }
       frames = data.frames.map((f, i) => ({ id: f.id||i+1, title:f.title||'', artist:f.artist||'', yt:f.yt||'' }));
-      localStorage.setItem('stellar_playlist', JSON.stringify(frames));
+      localStorage.setItem('noir_jazz_playlist', JSON.stringify(frames));
       renderList();
       if (editMode) applyEditDOM();
       alert('✓ 복원 완료: ' + frames.length + '개 트랙');
